@@ -1,63 +1,198 @@
-*{
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
-
-.App {
-  text-align: left;
-  display: flex;
-  flex-wrap: wrap;
+body{
+    background-color: white;
+}
+#top{
+    /*display: flex;*/
+    /*width: 100%;*/
+    /*justify-content: space-between;*/
+    /*list-style-type: none;*/
+    /*flex-wrap: wrap;*/
+}
+.title{
+    text-align: center;
+    padding: 10px;
+    color: #2E4053;
+    font-family: Snell Roundhand, cursive;
+}
+/* Menu */
+.bg-light {
+    background-color: white !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.current-page{
+    font-weight: bold;
 }
-
-.App-link {
-  color: #61dafb;
+.large-photo{
+    width: 100%;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.page{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
-
-.half{
-  width: 50%;
-  padding: 5%;
+.text-and-image{
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
 }
-
+.text{
+    background-color: #FEF5E7;
+    width: 100%;
+    margin: 5%;
+    padding: 3%;
+    margin-bottom: 0%;
+    display: flex;
+    fex-wrap: wrap;
+}
+.image-container{
+    width: 100%;
+    margin: 5%;
+}
+.intro{
+    font-size: 20px;
+    font-family: "Lucida Console", "Courier New", monospace;
+    width: 100%;
+}
+.small-photo{
+    width: 100%;
+}
+.bottom{
+    background-color: #515A5A;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+}
+.bottom-title{
+    text-align: center;
+    color: white;
+    width: 100%;
+    font-family: Snell Roundhand, cursive;
+    margin-bottom: 0%;
+}
+.bottom-menu{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+.bottom-menu-item{
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    padding: 5px;
+}
+.bottom-menu-item:hover{
+    text-decoration: underline;
+    color: white;
+}
+.line{
+    height: 1px;
+    color: white;
+}
+.disclosure{
+    padding: 10px 20px 20px 10px;
+    background-color: #515A5A;
+    color: white;
+    font-size: 10px;
+    font-family: "Lucida Console", "Courier New", monospace;
+    margin: 0px;
+}
+.small-button{
+    width: 33%;
+}
 button{
-  padding: 5px;
-  margin: 5px;
-  background-color: #CCD1D1;
-  border: 0px;
+    background-color: white;
+    padding: 10px;
+    width: 100%;
 }
-
 button:hover{
-  background-color: #7F8C8D;
+    background-color: #F2F4F4;
 }
 button:active{
-  background-color: #CCD1D1;
+    background-color: #E5E8E8;
+}
+.checkout-button{
+    margin-bottom: 100px;
+    width: 100%;
+    text-decoration: none;
+}
+.big-button{
+    width: 90% !important;
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+}
+
+@media only screen and (max-width: 400px) {
+}
+
+/* Tablet Styles */
+@media only screen and (min-width: 401px) and (max-width: 999px) {
+.title{
+    padding: 20px;
+}
+/*.top-menu{*/
+/*    width: 67%;*/
+/*    align-items: center;*/
+/*}*/
+
+.bottom{
+    align-items: center;
+    margin: 0px;
+}
+.bottom-title{
+    width: 33%;
+    margin: 5%;
+}
+.bottom-menu{
+    width: 33%;
+}
+}
+
+/* Desktop Styles */
+@media only screen and (min-width: 1000px) {
+.page {
+    width: 1000px;
+    margin: 0 auto;
+}
+.title{
+    padding: 20px;
+}
+.bottom{
+    align-items: center;
+}
+.bottom-title{
+    width: 25%;
+    margin: 5%;
+}
+.bottom-menu{
+    width: 25%;
+}
+.text-and-image{
+    display: flex;
+    width: 90%;
+    justify-content: flex-start;
+    margin: 5%;
+}
+.text{
+    background-color: #FEF5E7;
+    width: 40%;
+    margin: 0%;
+}
+.image-container{
+    width: 60%;
+    margin: 0%;
+}
 }

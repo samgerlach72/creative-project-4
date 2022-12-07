@@ -1,149 +1,153 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-const crypto = require("node:crypto");
 
 const app = express();
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "POST, GET, DELETE");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+
+const mongoose = require('mongoose');
+
+// connect to the database
+mongoose.connect('mongodb://localhost:27017/products', {
+  useUnifiedTopology: true,
+  useNewUrlParser: true
 });
-
-app.use(express.static('public'));
-
-let products = [];
-let cart = [];
-let id = 0;
-
-//Cart
-app.get('/api/cart', (req, res) => {
-  console.log("In cart get");
-  res.send(cart);
-});
-
-app.post('/api/cart/:id', (req, res) => {
-  console.log("In cart post");
-  id = req.params.id;
-  const foundItem = cart.find(item => item.id == id);
-  if(foundItem){
-    foundItem.quantity += 1;
-    res.send(foundItem);
-  }
-  else{
-    let item = {
-      id: id,
-      quantity: 1
-    };
-    cart.push(item);
-    res.send(item);
-  }
-});
-
-// app.put('/api/cart/:id/:quantity', (req, res) => {
-//   console.log("In cart put");
-//   let quantity = parseInt(req.params.quantity);
-//   id = req.params.id;
-//   const foundItem = cart.find(item => item.id == id);
-//   if(foundItem && quantity === 0){
-//     cart.splice(foundItem, 1);
-//     res.send(foundItem);
-//     res.sendStatus(200);
-//     return;
-//   }
-//   if(foundItem){
-//     foundItem.quantity = quantity;
-//     res.send(foundItem);
-//     res.sendStatus(200);
-//     return;
-//   }
-//   res.status(404);
-//   console.log("Sorry that item does not exist");
-// });
-
-
-app.put('/api/cart/:id/:quantity', (req, res) => {
-  console.log("In cart put");
-  let quantity = parseInt(req.params.quantity);
-  id = req.params.id;
-  const foundItem = cart.find(item => item.id == id);
-  if(!foundItem){
-    res.status(404);
-    console.log("Sorry that item does not exist");
-    return;
-  }
-  foundItem.quantity = quantity;
-  if(quantity === 0){
-    let removeIndex = cart.map(item => {
-      return item.id;
-    }).indexOf(id);
-    cart.splice(removeIndex, 1);
-  }
-  res.send(foundItem);
-});
-
-app.delete('/api/cart/:id', (req, res) => {
-  console.log("In cart delete");
-  id = req.params.id;
-  let removeIndex = cart.map(item => {
-      return item.id;
-    }).indexOf(id);
-  if (removeIndex === -1) {
-    res.status(404);
-    return;
-  }
-  cart.splice(removeIndex, 1);
-  res.sendStatus(200);
-});
-
 
 //products
-app.get('/api/products', (req, res) => {
-  console.log("In get");
-  res.send(products);
+const productSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  price: String,
+  photo: String,
+  quantity: Number
 });
 
-app.get('/api/products/:id', (req, res) => {
-  console.log("In get");
-  console.log(req.params);
-  id = req.params.id;
-  let getIndex = products.map(product => {
-      return product.id;
-    }).indexOf(id);
-  if (getIndex === -1) {
-    res.status(404)
-    return;
+// productSchema.virtual('id')
+//   .get(function() {
+//     return this._id.toHexString();
+//   });
+  
+productSchema.set('toJSON', {
+  virtuals: true
+});
+
+const Product = mongoose.model('Product', productSchema);
+
+app.get('/api/products', async (req, res) => {
+  console.log("In Products Get");
+  try {
+    let products = await Product.find();
+    res.send({products: products});
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
   }
-  res.send(products[getIndex]);
-  res.sendStatus(200);
 });
 
-app.post('/api/products', (req, res) => {
-  console.log("In post");
-  id = crypto.randomUUID();
-  let product = {
-    id: id,
+app.post('/api/products', async (req, res) => {
+    console.log("In Products POST");
+    const product = new Product({
     name: req.body.name,
-    price: req.body.price
-  };
-  products.push(product);
-  res.send(product);
+    description: req.body.description,
+    price: req.body.price,
+    photo: req.body.photo,
+    quantity: 0
+  });
+  try {
+    await product.save();
+    res.send({product:product});
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
 });
 
-app.delete('/api/products/:id', (req, res) => {
-  console.log("In delete");
-  id = req.params.id;
-  let removeIndex = products.map(product => {
-      return product.id;
-    }).indexOf(id);
-  if (removeIndex === -1) {
-    res.status(404);
-    return;
+app.delete('/api/products/:_id', async (req, res) => {
+  console.log("In Products Delete");
+  try {
+    await Product.deleteOne({
+      _id: req.params._id
+    });
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
   }
-  products.splice(removeIndex, 1);
-  res.sendStatus(200);
+});
+
+
+
+
+
+//Cart
+// const cartSchema = new mongoose.Schema({
+//   name: String,
+//   description: String,
+//   price: String,
+//   photo: String,
+//   id: String,
+//   quantity: Number
+// });
+
+// cartSchema.set('toJSON', {
+//   virtuals: true
+// });
+
+// const Cart = mongoose.model('Cart', cartSchema);
+
+app.get('/api/cart', async (req, res) => {
+  console.log("In Cart Get");
+  try {
+    let cart = await Product.find({quantity: {$gt:0}});
+    res.send({cart:cart});
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
+
+app.post('/api/cart/:_id', async (req, res) => {
+  console.log("In Cart POST");
+  try {
+    const filter = { _id: req.params._id };
+    const update = { $inc: {quantity: 1} };
+    // const foundItem = await Product.findOne({id: req.params.id});
+    // let quantity = parseInt(foundItem.quantity) + 1;
+    console.log(req.params._id);
+    const cart = await Product.findOne(filter);
+    cart.quantity += 1;
+    cart.save();
+    res.send({cart:cart});
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
+
+app.put('/api/cart/:_id/:quantity', async (req, res) => {
+  console.log("In cart put");
+  try {
+    const quantity = req.params.quantity;
+    const cart = await Product.findOneAndUpdate({_id: req.params._id}, { $set: {quantity: quantity} });
+    res.send({cart:cart});
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
+
+app.delete('/api/cart/:_id', async (req, res) => {
+  console.log("In Cart Delete");
+  try {
+    const cart = await Product.findOneAndUpdate({_id: req.params._id}, { $set: {quantity: 0} });
+    res.send({cart:cart});
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
 });
 
 app.listen(3000, () => console.log('Server listening on port 3000!'));
+  
