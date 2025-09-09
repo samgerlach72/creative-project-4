@@ -1,1 +1,3 @@
-This is a website I implemented in my web design class when I was a sophomore in college. The code is disorganized, but the project demonstrates good principles of design.
+Website implemented in my web design class as a sophomore at BYU. 
+Role: Frontend programming (primary); backend programming (secondary); system architecture.
+Tech Stack: JavaScript; React Framework; MongoDB; HTML/CSS.
